@@ -31,9 +31,9 @@ if __name__ == '__main__':
     x_test = tf.cast(x_test, dtype=tf.float32)
     # train_dataset, test_dataset = preprocess(x_train, x_test)
     input_shape = (1, x_train.shape[2], 1)
-    # cnn_Auto = Cnn_AE_1('result', input_shape, True)
-    cnn_Auto = Cnn_AE_2('result', input_shape, True)
-    # cnn_Auto.fit_model(x_train, x_train, x_test, x_test)
+    cnn_Auto = Cnn_AE_1('result', input_shape, True)
+    # cnn_Auto = Cnn_AE_2('result', input_shape, True)
+    cnn_Auto.fit_model(x_train, x_train, x_test, x_test)
 
 
 
