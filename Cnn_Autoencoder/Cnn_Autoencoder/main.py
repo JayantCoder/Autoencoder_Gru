@@ -10,21 +10,21 @@ def readucr(filename):#读取数据
 
 
 def preprocess(x_train, x_test):
-    train_dataset = tf.data.Dataset.from_tensor_slices(x_train)
-    test_dataset = tf.data.Dataset.from_tensor_slices(x_test)
+    train_dataset = tf.data.Dataset.from_tensor_slices((x_train, x_train))
+    test_dataset = tf.data.Dataset.from_tensor_slices((x_test, x_test))
     return train_dataset, test_dataset
 
 
 if __name__ == '__main__':
     # [60, 576]
-    x_train = readucr('data/Car_TRAIN.txt')
+    x_train = readucr('data/Car/Car_TRAIN.txt')
     x_train = np.expand_dims(x_train, -1)
     x_train = np.expand_dims(x_train, 1)
     x_train = x_train.astype(float)
     x_train = tf.cast(x_train, dtype=tf.float32)
 
     # [60, 576]
-    x_test = readucr('data/Car_TEST.txt')
+    x_test = readucr('data/Car/Car_TEST.txt')
     x_test = np.expand_dims(x_test, -1)
     x_test = np.expand_dims(x_test, 1)
     x_test = x_test.astype(float)
@@ -34,6 +34,7 @@ if __name__ == '__main__':
     cnn_Auto = Cnn_AE_1('result', input_shape, True)
     # cnn_Auto = Cnn_AE_2('result', input_shape, True)
     cnn_Auto.fit_model(x_train, x_train, x_test, x_test)
+    # cnn_Auto.fit_model(train_dataset, test_dataset)
 
 
 

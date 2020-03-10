@@ -1,6 +1,6 @@
 # Import all the required Libraries
 import os
-import time
+import time, datetime
 import tensorflow as tf
 from tensorflow.keras import layers, optimizers
 from tensorflow.keras.models import Model, load_model
@@ -118,48 +118,50 @@ class Cnn_AE_2:
             conv1 = Conv2D(filters=16, kernel_size=(3, 5), padding='same')(input_layer)
             conv1 = BatchNormalization()(conv1)
             conv1 = Activation(activation='relu')(conv1)
-            conv1_pool, conv1_argmax = Lambda(abMaxPooling_with_argmax, arguments={'pool_size': [2, 2]}, name='abMaxPool1')(conv1)
-            # conv1_pool = Lambda(abMaxPooling2D, arguments={'pool_size': [2, 2]})(conv1)
+            # conv1_pool, conv1_argmax = Lambda(abMaxPooling_with_argmax, arguments={'pool_size': [2, 2]}, name='abMaxPool1')(conv1)
+            conv1_pool = Lambda(abMaxPooling2D, arguments={'pool_size': [2, 2]}, name='abMaxPool1')(conv1)
 
         # conv block -2 （卷积+池化）
         conv2 = Conv2D(filters=8, kernel_size=(3, 5), padding='same')(conv1_pool)
         conv2 = BatchNormalization()(conv2)
         conv2 = Activation(activation='relu')(conv2)
-        conv2_pool, conv2_argmax = Lambda(abMaxPooling_with_argmax, arguments={'pool_size': [2, 2]}, name='abMaxPool2')(conv2)
+        # conv2_pool, conv2_argmax = Lambda(abMaxPooling_with_argmax, arguments={'pool_size': [2, 2]}, name='abMaxPool2')(conv2)
+        conv2_pool = Lambda(abMaxPooling2D, arguments={'pool_size': [2, 2]}, name='abMaxPool2')(conv2)
 
         # conv block -3 （卷积）
         conv3 = Conv2D(filters=8, kernel_size=(3, 5), padding='same')(conv2_pool)
         conv3 = BatchNormalization()(conv3)
         conv3 = Activation(activation='relu')(conv3)
-        encoder, conv3_argmax = Lambda(abMaxPooling_with_argmax, arguments={'pool_size': [2, 2]}, name='abMaxPool3')(conv3)
+        # encoder, conv3_argmax = Lambda(abMaxPooling_with_argmax, arguments={'pool_size': [2, 2]}, name='abMaxPool3')(conv3)
+        encoder = Lambda(abMaxPooling2D, arguments={'pool_size': [2, 2]}, name='abMaxPool3')(conv3)
+
 
         # decoder
         # conv block -1 （反卷积+反池化）
-        # deconv1_unpool = UpSampling2D(size=(2, 2))(encoder)
-        deconv1_unpool = Lambda(unAbMaxPooling, arguments={'argmax': conv3_argmax, 'strides': 2}, name='unAbPool1')(encoder)
+        deconv1_unpool = UpSampling2D(size=(2, 2))(encoder)
+        # deconv1_unpool = Lambda(unAbMaxPooling, arguments={'argmax': conv3_argmax, 'strides': 2}, name='unAbPool1')(encoder)
         deconv1 = Conv2DTranspose(filters=8, kernel_size=(3, 5), padding='same')(deconv1_unpool)
         deconv1 = BatchNormalization()(deconv1)
         deconv1 = Activation(activation='relu')(deconv1)
 
         # conv block -2 （反卷积+反池化）
-        # deconv2_unpool = UpSampling2D(size=(2, 2))(deconv1)
-        deconv2_unpool = Lambda(unAbMaxPooling, arguments={'argmax': conv2_argmax, 'strides': 2}, name='unAbPool2')(deconv1)
+        deconv2_unpool = UpSampling2D(size=(2, 2))(deconv1)
+        # deconv2_unpool = Lambda(unAbMaxPooling, arguments={'argmax': conv2_argmax, 'strides': 2}, name='unAbPool2')(deconv1)
         deconv2 = Conv2DTranspose(filters=8, kernel_size=(3, 5), padding='same')(deconv2_unpool)
         deconv2 = BatchNormalization()(deconv2)
         deconv2 = Activation(activation='relu')(deconv2)
 
         # conv block -3 （反卷积+反池化）
-        # deconv3 = Conv2D(filters=16, kernel_size=(8, 3), activation='relu', padding='same')(deconv2_unpool)
-        # deconv3_unpool = UpSampling2D(size=(2, 2))(deconv2)
-        deconv3_unpool = Lambda(unAbMaxPooling, arguments={'argmax': conv1_argmax, 'strides': 2}, name='unAbPool3')(deconv2)
+        deconv3_unpool = UpSampling2D(size=(2, 2))(deconv2)
+        # deconv3_unpool = Lambda(unAbMaxPooling, arguments={'argmax': conv1_argmax, 'strides': 2}, name='unAbPool3')(deconv2)
         deconv3 = Conv2DTranspose(filters=16, kernel_size=(3, 5), padding='same')(deconv3_unpool)
         deconv3 = BatchNormalization()(deconv3)
         deconv3 = Activation(activation='relu')(deconv3)
 
         # decoder = Conv2D(filters=1, kernel_size=(16, 5), activation='relu', padding='same')(deconv3_unpool)
-        output_layer = Conv2DTranspose(filters=1, kernel_size=(3, 5), padding='same')(deconv3)
+        output_layer = Conv2DTranspose(filters=input_shape[2], kernel_size=(3, 5), padding='same')(deconv3)
         output_layer = BatchNormalization()(output_layer)
-        output_layer = Activation(activation='sigmoid')(output_layer)
+        output_layer = Activation(activation='relu')(output_layer)
 
         model = Model(inputs=input_layer, outputs=output_layer)
 
@@ -168,7 +170,8 @@ class Cnn_AE_2:
 
         file_path = os.path.join(self.output_directory, 'best_model.hdf5')
 
-        # tensorboad = keras.callbacks.Tensorboard(log_dir='log')
+        log_dir = "logs/fit/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+        # tensorboard = tf.keras.callbacks.Tensorboard(log_dir=log_dir)
         model_checkpoint = keras.callbacks.ModelCheckpoint(filepath=file_path,
                                                            monitor='val_loss', save_best_only=True, mode='auto')
         reduce_lr = keras.callbacks.ReduceLROnPlateau(monitor='loss', factor=0.9, patience=20,
