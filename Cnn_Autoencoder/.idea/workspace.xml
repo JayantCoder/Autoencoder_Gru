@@ -12,15 +12,15 @@
   <component name="CoverageDataManager">
     <SUITE FILE_PATH="coverage/Cnn_Autoencoder$Autoencoder_tf_outputGru_V1.coverage" NAME="Autoencoder_tf_outputGru_V1 Coverage Results" MODIFIED="1583459795929" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Cnn_Autoencoder" />
     <SUITE FILE_PATH="coverage/Cnn_Autoencoder$cifar10_train.coverage" NAME="cifar10_train Coverage Results" MODIFIED="1583152198427" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Cnn_Autoencoder/learn_test" />
-    <SUITE FILE_PATH="coverage/Cnn_Autoencoder$main.coverage" NAME="main Coverage Results" MODIFIED="1583757900901" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Cnn_Autoencoder" />
+    <SUITE FILE_PATH="coverage/Cnn_Autoencoder$main.coverage" NAME="main Coverage Results" MODIFIED="1583895738732" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Cnn_Autoencoder" />
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file leaf-file-name="main.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Cnn_Autoencoder/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="266">
-              <caret line="32" column="14" lean-forward="true" selection-start-line="32" selection-start-column="14" selection-end-line="32" selection-end-column="14" />
+            <state relative-caret-position="950">
+              <caret line="50" column="55" lean-forward="true" selection-start-line="50" selection-start-column="55" selection-end-line="50" selection-end-column="55" />
               <folding>
                 <element signature="e#0#30#0" expanded="true" />
               </folding>
@@ -31,8 +31,8 @@
       <file leaf-file-name="cnn_AE_2.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Cnn_Autoencoder/cnn_AE_2.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="190">
-              <caret line="118" column="43" selection-start-line="118" selection-start-column="43" selection-end-line="118" selection-end-column="43" />
+            <state relative-caret-position="163">
+              <caret line="193" column="61" lean-forward="true" selection-start-line="193" selection-start-column="61" selection-end-line="193" selection-end-column="61" />
               <folding>
                 <element signature="e#36#45#0" expanded="true" />
               </folding>
@@ -40,11 +40,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="cnn_AE_1.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="cnn_AE_1.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Cnn_Autoencoder/cnn_AE_1.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="190">
-              <caret line="187" column="5" lean-forward="true" selection-start-line="187" selection-start-column="5" selection-end-line="187" selection-end-column="5" />
+            <state relative-caret-position="171">
+              <caret line="54" column="13" selection-start-line="54" selection-start-column="13" selection-end-line="54" selection-end-column="13" />
               <folding>
                 <element signature="e#36#45#0" expanded="true" />
               </folding>
@@ -52,25 +52,25 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Autoencoder_tf_outputGru_V1.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Cnn_Autoencoder/Autoencoder_tf_outputGru_V1.py">
+      <file leaf-file-name="test.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/Cnn_Autoencoder/test.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="787">
-              <caret line="103" column="14" lean-forward="true" selection-start-line="103" selection-start-column="14" selection-end-line="103" selection-end-column="14" />
+            <state relative-caret-position="519">
+              <caret line="103" column="58" lean-forward="true" selection-start-line="103" selection-start-column="58" selection-end-line="103" selection-end-column="58" />
               <folding>
-                <element signature="e#0#18#0" expanded="true" />
+                <element signature="e#0#23#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="test.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Cnn_Autoencoder/test.py">
+      <file leaf-file-name="cnn_AE_1pro.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Cnn_Autoencoder/cnn_AE_1pro.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="342">
-              <caret line="24" column="12" selection-start-line="24" selection-start-column="12" selection-end-line="24" selection-end-column="12" />
+            <state relative-caret-position="1056">
+              <caret line="261" column="34" selection-start-line="261" selection-start-column="34" selection-end-line="261" selection-end-column="34" />
               <folding>
-                <element signature="e#0#23#0" expanded="true" />
+                <element signature="e#36#45#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -94,11 +94,12 @@
         <option value="$PROJECT_DIR$/Cnn_Autoencoder/learn_test/cifar10_train.py" />
         <option value="$PROJECT_DIR$/Cnn_Autoencoder/unAbMaxPooling.py" />
         <option value="$PROJECT_DIR$/Cnn_Autoencoder/Autoencoder_tf_outputGru_V1.py" />
-        <option value="$PROJECT_DIR$/Cnn_Autoencoder/cnn_AE_2.py" />
         <option value="$PROJECT_DIR$/test.py" />
-        <option value="$PROJECT_DIR$/Cnn_Autoencoder/test.py" />
-        <option value="$PROJECT_DIR$/Cnn_Autoencoder/main.py" />
+        <option value="$PROJECT_DIR$/Cnn_Autoencoder/cnn_AE_2.py" />
         <option value="$PROJECT_DIR$/Cnn_Autoencoder/cnn_AE_1.py" />
+        <option value="$PROJECT_DIR$/Cnn_Autoencoder/cnn_AE_1pro.py" />
+        <option value="$PROJECT_DIR$/Cnn_Autoencoder/main.py" />
+        <option value="$PROJECT_DIR$/Cnn_Autoencoder/test.py" />
       </list>
     </option>
   </component>
@@ -148,13 +149,14 @@
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
   </component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="D:\PyCharmProject\Cnn_Autoencoder\Cnn_Autoencoder" />
-    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\PyCharmProject\Cnn_Autoencoder\Cnn_Autoencoder" />
       <recent name="D:\PyCharmProject\Cnn_Autoencoder\Cnn_Autoencoder\data\Car" />
       <recent name="D:\PyCharmProject\Cnn_Autoencoder\Cnn_Autoencoder\learn_test" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\PyCharmProject\Cnn_Autoencoder\Cnn_Autoencoder" />
+      <recent name="D:\PyCharmProject\Cnn_Autoencoder\Cnn_Autoencoder\data" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -256,26 +258,26 @@
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
     <layout>
-      <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.50067025" side_tool="true" weight="0.32905984" />
-      <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
+      <window_info anchor="bottom" id="TODO" order="4" />
+      <window_info anchor="bottom" id="Event Log" order="5" sideWeight="0.50067025" side_tool="true" weight="0.32905984" />
+      <window_info anchor="bottom" id="Database Changes" order="6" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="7" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Python Console" order="7" sideWeight="0.49932975" weight="0.32905984" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.32905984" />
-      <window_info anchor="bottom" id="Terminal" order="7" weight="0.32905984" />
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.27345845" />
-      <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Python Console" order="8" sideWeight="0.49932975" weight="0.32905984" />
+      <window_info anchor="bottom" id="Run" order="11" weight="0.14957266" />
+      <window_info anchor="right" id="Terminal" order="5" weight="0.46380696" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.16085792" />
+      <window_info anchor="bottom" id="Docker" order="9" show_stripe_button="false" />
       <window_info anchor="right" id="Database" order="3" />
-      <window_info anchor="right" id="SciView" order="3" weight="0.3297587" />
+      <window_info anchor="right" id="SciView" order="4" weight="0.3297587" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.36324787" />
+      <window_info anchor="bottom" id="Debug" order="10" weight="0.36039886" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="Inspection" order="3" weight="0.4" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Cvs" order="2" weight="0.25" />
       <window_info anchor="bottom" id="Find" order="1" />
     </layout>
   </component>
@@ -294,7 +296,7 @@
           <option name="timeStamp" value="8" />
         </line-breakpoint>
       </breakpoints>
-      <option name="time" value="24" />
+      <option name="time" value="33" />
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
@@ -481,13 +483,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://D:/CPython3/Lib/site-packages/tensorflow_core/python/keras/layers/core.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="132">
-          <caret line="794" selection-start-line="794" selection-end-line="794" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://D:/work_study/TSD数据挖掘work/杂七杂八/tensorflow_unpooling-master/tensorflow_unpooling-master/unpool.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-106">
@@ -499,9 +494,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="152">
           <caret line="8" column="20" selection-start-line="8" selection-start-column="20" selection-end-line="8" selection-end-column="20" />
-          <folding>
-            <element signature="e#0#23#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -519,40 +511,90 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Cnn_Autoencoder/cnn_AE_2.py">
+    <entry file="file://$PROJECT_DIR$/Cnn_Autoencoder/Autoencoder_tf_outputGru_V1.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="190">
-          <caret line="118" column="43" selection-start-line="118" selection-start-column="43" selection-end-line="118" selection-end-column="43" />
-          <folding>
-            <element signature="e#36#45#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="1336">
+          <caret line="103" column="14" selection-start-line="103" selection-start-column="14" selection-end-line="103" selection-end-column="14" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Cnn_Autoencoder/test.py">
+    <entry file="file://D:/CPython3/Lib/copy.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="342">
-          <caret line="24" column="12" selection-start-line="24" selection-start-column="12" selection-end-line="24" selection-end-column="12" />
+        <state relative-caret-position="148">
+          <caret line="149" selection-start-line="149" selection-end-line="149" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://D:/CPython3/Lib/site-packages/tensorflow_core/python/keras/saving/save.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2508">
+          <caret line="145" selection-start-line="145" selection-end-line="145" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://D:/CPython3/Lib/site-packages/tensorflow_core/python/keras/saving/hdf5_format.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2641">
+          <caret line="156" column="7" selection-start-line="156" selection-start-column="7" selection-end-line="156" selection-end-column="7" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://D:/CPython3/Lib/site-packages/tensorflow_core/python/keras/saving/model_config.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="112">
+          <caret line="54" selection-start-line="54" selection-end-line="54" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://D:/CPython3/Lib/site-packages/tensorflow_core/python/keras/layers/serialization.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="227">
+          <caret line="101" selection-start-line="101" selection-end-line="101" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://D:/CPython3/Lib/site-packages/tensorflow_core/python/keras/utils/generic_utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="120">
+          <caret line="190" selection-start-line="190" selection-end-line="190" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://D:/CPython3/Lib/site-packages/tensorflow_core/python/keras/engine/network.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="169">
+          <caret line="905" selection-start-line="905" selection-end-line="905" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://D:/CPython3/Lib/site-packages/tensorflow_core/python/keras/engine/base_layer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="177">
+          <caret line="841" selection-start-line="841" selection-end-line="841" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://D:/CPython3/Lib/site-packages/tensorflow_core/python/keras/layers/core.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="303">
+          <caret line="794" selection-start-line="794" selection-end-line="794" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Cnn_Autoencoder/mnist_train.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="399">
+          <caret line="21" column="38" lean-forward="true" selection-start-line="21" selection-start-column="38" selection-end-line="21" selection-end-column="38" />
           <folding>
             <element signature="e#0#23#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Cnn_Autoencoder/Autoencoder_tf_outputGru_V1.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="787">
-          <caret line="103" column="14" lean-forward="true" selection-start-line="103" selection-start-column="14" selection-end-line="103" selection-end-column="14" />
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Cnn_Autoencoder/main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="266">
-          <caret line="32" column="14" lean-forward="true" selection-start-line="32" selection-start-column="14" selection-end-line="32" selection-end-column="14" />
+        <state relative-caret-position="950">
+          <caret line="50" column="55" lean-forward="true" selection-start-line="50" selection-start-column="55" selection-end-line="50" selection-end-column="55" />
           <folding>
             <element signature="e#0#30#0" expanded="true" />
           </folding>
@@ -561,10 +603,40 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Cnn_Autoencoder/cnn_AE_1.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="190">
-          <caret line="187" column="5" lean-forward="true" selection-start-line="187" selection-start-column="5" selection-end-line="187" selection-end-column="5" />
+        <state relative-caret-position="171">
+          <caret line="54" column="13" selection-start-line="54" selection-start-column="13" selection-end-line="54" selection-end-column="13" />
           <folding>
             <element signature="e#36#45#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Cnn_Autoencoder/cnn_AE_2.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="163">
+          <caret line="193" column="61" lean-forward="true" selection-start-line="193" selection-start-column="61" selection-end-line="193" selection-end-column="61" />
+          <folding>
+            <element signature="e#36#45#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Cnn_Autoencoder/cnn_AE_1pro.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1056">
+          <caret line="261" column="34" selection-start-line="261" selection-start-column="34" selection-end-line="261" selection-end-column="34" />
+          <folding>
+            <element signature="e#36#45#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Cnn_Autoencoder/test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="519">
+          <caret line="103" column="58" lean-forward="true" selection-start-line="103" selection-start-column="58" selection-end-line="103" selection-end-column="58" />
+          <folding>
+            <element signature="e#0#23#0" expanded="true" />
           </folding>
         </state>
       </provider>
