@@ -1,5 +1,4 @@
-# hello-world
+## For test
 
-Just try it
+Just for test, not **official edition**
 
-It is a good star.
