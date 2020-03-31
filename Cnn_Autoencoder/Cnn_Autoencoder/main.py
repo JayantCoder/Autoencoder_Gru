@@ -1,49 +1,79 @@
+from data_utils import readucr, Data_MinMax_Scaler,is_abnormal
 from  cnn_AE_1 import Cnn_AE_1
+from cnn_AE_1pro import Cnn_AE_1pro
+from GRU import Autoencoder_GRU, output_of_gru
 import tensorflow as tf
+from tensorflow.keras.models import Model, load_model
 import numpy as np
+from sklearn.model_selection import train_test_split
 from cnn_AE_2 import Cnn_AE_2
-
-def readucr(filename):#读取数据
-    data = np.loadtxt(filename, dtype=str, delimiter = ',')
-    x = data[:, 0:576]
-    return x
+from cnn_AE_n import Cnn_AE_n
+from cnn_AE_npron import Cnn_AE_npron
+from cnn_AE_nproc import Cnn_AE_nproc
 
 
-def preprocess(x_train, x_test):
-    train_dataset = tf.data.Dataset.from_tensor_slices(x_train)
-    test_dataset = tf.data.Dataset.from_tensor_slices(x_test)
-    return train_dataset, test_dataset
+# 第一个想法，相同卷积核模型训练
+def train_cnn_AE_n(input_shape, x_train, y_train, x_test, y_test, batchsize=6, epochs=400, verbose=True):
+    model = Cnn_AE_n('result', input_shape, batchsize,verbose)
+    model.fit_model(x_train, y_train, x_test, y_test, epochs)
+
+
+# 第二个想法，不同卷积核模型训练，在传感器维度上拼接
+def train_cnn_AE_npron(input_shape, x_train, y_train, x_test, y_test, batchsize=6, epochs=400, verbose=True):
+    model = Cnn_AE_npron('result', input_shape, batchsize, verbose)
+    model.fit_model(x_train, y_train, x_test, y_test, epochs)
+
+
+# 第三个想法，不同卷积核模型训练，在channel维度上拼接
+def train_cnn_AE_nproc(input_shape, x_train, y_train, x_test, y_test, batchsize=6, epochs=400, verbose=True):
+    model = Cnn_AE_nproc('result', input_shape, batchsize, verbose)
+    model.fit_model(x_train, y_train, x_test, y_test, epochs)
+
+
+# 第四个想法，卷积核长宽不一致.（数据的rows不得少于4）
+def train_cnn_AE_2(input_shape, x_train, y_train, x_test, y_test, batchsize=6, epochs=400, verbose=True):
+    model = Cnn_AE_2('result', input_shape, batchsize, verbose)
+    model.fit_model(x_train, y_train, x_test, y_test, epochs)
 
 
 if __name__ == '__main__':
-    # [60, 576]
-    x_train = readucr('data/Car_TRAIN.txt')
-    x_train = np.expand_dims(x_train, -1)
-    x_train = np.expand_dims(x_train, 1)
-    x_train = x_train.astype(float)
-    x_train = tf.cast(x_train, dtype=tf.float32)
+    # 读取数据
+    x_train, y_train = readucr('data/FordA/FordA_TRAIN.txt')
+    x_test, y_test = readucr('data/FordA/FordA_TEST.txt')
 
-    # [60, 576]
-    x_test = readucr('data/Car_TEST.txt')
-    x_test = np.expand_dims(x_test, -1)
-    x_test = np.expand_dims(x_test, 1)
-    x_test = x_test.astype(float)
-    x_test = tf.cast(x_test, dtype=tf.float32)
-    # train_dataset, test_dataset = preprocess(x_train, x_test)
-    input_shape = (1, x_train.shape[2], 1)
-    # cnn_Auto = Cnn_AE_1('result', input_shape, True)
-    cnn_Auto = Cnn_AE_2('result', input_shape, True)
-    # cnn_Auto.fit_model(x_train, x_train, x_test, x_test)
+    # 将数据归一化
+    x_train = Data_MinMax_Scaler(x_train)
+    y_train = Data_MinMax_Scaler(y_train)
+    x_test = Data_MinMax_Scaler(x_test)
+    y_test = Data_MinMax_Scaler(y_test)
 
+    # 划分 训练集 和 验证集
+    # x_train, x_valid, y_train, y_valid = train_test_split(x_train, y_train,
+    #                                                       test_size=0.33,
+    #                                                       shuffle=True,
+    #                                                       random_state=42)
 
+    # 训练gru模型
+    #gru_model = Autoencoder_GRU('result', x_train.shape[1:], 1)
+    #gru_model.fit(x_train, y_train, x_test, y_test, epochs=500)
 
+    # 提取gru的输出
+    GruFilepath = 'result/gru/FordA_gru_model.hdf5'
+    gru_train = output_of_gru(x_train, GruFilepath)
+    gru_test = output_of_gru(x_test, GruFilepath)
 
+    # 训练cnn模型
+    #input_shape = (1, gru_train.shape[2], gru_train.shape[3])
+    #cnn_Auto = Cnn_AE_1pro('result', input_shape, True)
+    #cnn_Auto.fit_model(gru_train, gru_train, gru_test, gru_test, epochs=400)
 
+    # 输入测试数据
+    test_data, _ = readucr('data/FordA/test_data.txt')
+    test_data = np.array(test_data[:6, :])
+    g_test = output_of_gru(test_data, GruFilepath)
 
-    # x_train = data_Process.readucr('data/Car_TRAIN.txt', 1)  # 每一个是577个数据，一类有16个
-    # x_train = np.array(x_train)
-    # print(x_train.shape)
-    # x_test = data_Process.readucr('data/Car_TEST.txt', 1)[0]
-    # x_val = data_Process.readucr('data/Car_TEST.txt', 1)[1]
-    # cnn_Auto = Cnn_AE_1('result', (len(x_train),), True)
-    # cnn_Auto.train_model(x_train, x_train, x_val, x_val)
+    # 测试是否异常
+    cnnfilepath = 'result/cnn_AE_1pro/FordA_cnn_model.hdf5'
+    print(gru_train.shape)
+    gru_train = gru_train[:3600,:]
+    is_abnormal(cnnfilepath, g_test, gru_train, gru_train)
