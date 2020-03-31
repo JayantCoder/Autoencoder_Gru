@@ -175,7 +175,7 @@ class Cnn_AE_2:
                                                       min_lr=0.0001)
 
         self.callbacks = [tensorboard, model_checkpoint, reduce_lr]
-        self.callbacks = [model_checkpoint, reduce_lr]
+        # self.callbacks = [model_checkpoint, reduce_lr]
 
         return model
 
