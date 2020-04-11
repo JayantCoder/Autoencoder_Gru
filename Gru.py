@@ -83,5 +83,5 @@ input_shape = X_train.shape[1:]
 classifier = Classifier_GRU('test',input_shape,1,True)
 
 classifier.fit(X_train,Y_train,X_test,Y_test)
-
+print('git test\n')
 #Test git 
