@@ -1,9 +1,11 @@
-# Import all the required Libraries
+#!/usr/bin/env python
+#-*- coding: UTF-8 -*-
 import os
 import time
 import datetime
 import tensorflow as tf
 from tensorflow import keras
+from tensorflow.keras import backend as K
 from tensorflow.keras import layers, optimizers
 from tensorflow.keras.models import Model, load_model
 from tensorflow.keras.layers import Conv1D, Conv2D, BatchNormalization, Input, \
@@ -89,21 +91,61 @@ def reshapes(x):
     return x
 
 
-# def reshape_output_shape(input_shape):
-#     if len(input_shape) == 4:
-#         return (input_shape[0], input_shape[2], input_shape[3])
-#     if len(input_shape) == 3:
-#         return (input_shape[0], input_shape[2], input_shape[1], 1)
+def root_mean_squared_error(y_true, y_pred):
+    return K.sqrt(K.mean(K.square(y_pred - y_true)))
+
 
 
 class Cnn_AE_npron:
     def __init__(self, output_directory, input_shape, batchsize, verbose=False):
         self.output_directory = output_directory
+        self.set_Config()
         self.model = self.build_model(input_shape, batchsize)
         # verbose是信息展示模式
         if verbose == True:
             self.model.summary()
         self.verbose = verbose
+
+    def set_Config(self):
+        self.conv1_filters = 64
+        self.conv1_incep1_filters = 20
+        self.conv1_incep1_kersize = 1
+        self.conv1_incep2_filters = 22
+        self.conv1_incep2_kersize = 3
+        self.conv1_incep3_filters = 22
+        self.conv1_incep3_kersize = 5
+
+        self.conv2_filters = 32
+        self.conv2_incep1_filters = 8
+        self.conv2_incep1_kersize = 1
+        self.conv2_incep2_filters = 12
+        self.conv2_incep2_kersize = 3
+        self.conv2_incep3_filters = 12
+        self.conv2_incep3_kersize = 5
+
+        self.conv3_filters = 16
+        self.conv3_incep1_filters = 4
+        self.conv3_incep1_kersize = 1
+        self.conv3_incep2_filters = 6
+        self.conv3_incep2_kersize = 3
+        self.conv3_incep3_filters = 6
+        self.conv3_incep3_kersize = 5
+
+        self.conv4_filters = 8
+        self.conv4_incep1_filters = 2
+        self.conv4_incep1_kersize = 1
+        self.conv4_incep2_filters = 3
+        self.conv4_incep2_kersize = 3
+        self.conv4_incep3_filters = 3
+        self.conv4_incep3_kersize = 5
+
+        self.z_filters = 8
+        self.z_kersize = 3
+        self.deconv1_kersize = 3
+        self.deconv2_kersize = 3
+        self.deconv3_kersize = 3
+        self.deconv4_kersize = 3
+
 
     def build_model(self, input_shape, batchsize):
         # input --> (None, 1, 576, 1)
@@ -112,23 +154,21 @@ class Cnn_AE_npron:
         # conv block -1 （卷积+池化）
         h1 = input_layer.shape[1]
         # inception1
-        conv1_incep1 = Conv2D(filters=4, kernel_size=(h1, 1))(input_layer)
+        conv1_incep1 = Conv2D(filters=self.conv1_incep1_filters, kernel_size=(h1, self.conv1_incep1_kersize))(input_layer)
         conv1_incep1 = BatchNormalization()(conv1_incep1)
         conv1_incep1 = Activation(activation='relu')(conv1_incep1)
         # inception2
-        conv1_incep2 = ZeroPadding2D((0, 1))(input_layer)
-        conv1_incep2 = Conv2D(filters=6, kernel_size=(h1, 3))(conv1_incep2)
+        conv1_incep2 = ZeroPadding2D((0, self.conv1_incep2_kersize//2))(input_layer)
+        conv1_incep2 = Conv2D(filters=self.conv1_incep2_filters, kernel_size=(h1, self.conv1_incep2_kersize))(conv1_incep2)
         conv1_incep2 = BatchNormalization()(conv1_incep2)
         conv1_incep2 = Activation(activation='relu')(conv1_incep2)
         # inception3
-        conv1_incep3 = ZeroPadding2D((0, 2))(input_layer)
-        conv1_incep3 = Conv2D(filters=6, kernel_size=(h1, 5))(conv1_incep3)
+        conv1_incep3 = ZeroPadding2D((0, self.conv1_incep3_kersize//2))(input_layer)
+        conv1_incep3 = Conv2D(filters=self.conv1_incep3_filters, kernel_size=(h1, self.conv1_incep3_kersize))(conv1_incep3)
         conv1_incep3 = BatchNormalization()(conv1_incep3)
         conv1_incep3 = Activation(activation='relu')(conv1_incep3)
         # concat
         conv1 = Concatenate(axis=-1)([conv1_incep1, conv1_incep2, conv1_incep3])
-        # 加高斯噪声
-        # conv1 = GaussianNoise(stddev=0.1)(conv1)
         # 池化层
         conv1_pool, conv1_argmax = Lambda(abMaxPooling_with_argmax, arguments={'pool_size': [1, 2]}, name='abMaxPool1')(
             conv1)
@@ -138,23 +178,21 @@ class Cnn_AE_npron:
         # conv block -2 （卷积+池化）
         h2 = conv1_pool.shape[1]
         # inception1
-        conv2_incep1 = Conv2D(filters=2, kernel_size=(h2, 1))(conv1_pool)
+        conv2_incep1 = Conv2D(filters=self.conv2_incep1_filters, kernel_size=(h2, self.conv2_incep1_kersize))(conv1_pool)
         conv2_incep1 = BatchNormalization()(conv2_incep1)
         conv2_incep1 = Activation(activation='relu')(conv2_incep1)
         # inception2
-        conv2_incep2 = ZeroPadding2D((0, 1))(conv1_pool)
-        conv2_incep2 = Conv2D(filters=3, kernel_size=(h2, 3))(conv2_incep2)
+        conv2_incep2 = ZeroPadding2D((0, self.conv2_incep2_kersize//2))(conv1_pool)
+        conv2_incep2 = Conv2D(filters=self.conv2_incep2_filters, kernel_size=(h2, self.conv2_incep2_kersize))(conv2_incep2)
         conv2_incep2 = BatchNormalization()(conv2_incep2)
         conv2_incep2 = Activation(activation='relu')(conv2_incep2)
         # inception3
-        conv2_incep3 = ZeroPadding2D((0, 2))(conv1_pool)
-        conv2_incep3 = Conv2D(filters=3, kernel_size=(h2, 5))(conv2_incep3)
+        conv2_incep3 = ZeroPadding2D((0, self.conv2_incep3_kersize//2))(conv1_pool)
+        conv2_incep3 = Conv2D(filters=self.conv2_incep3_filters, kernel_size=(h2, self.conv2_incep3_kersize))(conv2_incep3)
         conv2_incep3 = BatchNormalization()(conv2_incep3)
         conv2_incep3 = Activation(activation='relu')(conv2_incep3)
         # concat
         conv2 = Concatenate(axis=-1)([conv2_incep1, conv2_incep2, conv2_incep3])
-        # 加高斯噪声
-        # conv2 = GaussianNoise(stddev=0.1)(conv2)
         # 池化层
         conv2_pool, conv2_argmax = Lambda(abMaxPooling_with_argmax, arguments={'pool_size': [1, 2]}, name='abMaxPool2')(
             conv2)
@@ -164,60 +202,87 @@ class Cnn_AE_npron:
         # conv block -3 （卷积）
         h3 = conv2_pool.shape[1]
         # inception1
-        conv3_incep1 = Conv2D(filters=2, kernel_size=(h3, 1))(conv2_pool)
+        conv3_incep1 = Conv2D(filters=self.conv3_incep1_filters, kernel_size=(h3, self.conv3_incep1_kersize))(conv2_pool)
         conv3_incep1 = BatchNormalization()(conv3_incep1)
         conv3_incep1 = Activation(activation='relu')(conv3_incep1)
         # inception2
-        conv3_incep2 = ZeroPadding2D((0, 1))(conv2_pool)
-        conv3_incep2 = Conv2D(filters=3, kernel_size=(h3, 3))(conv3_incep2)
+        conv3_incep2 = ZeroPadding2D((0, self.conv3_incep2_kersize//2))(conv2_pool)
+        conv3_incep2 = Conv2D(filters=self.conv3_incep2_filters, kernel_size=(h3, self.conv3_incep2_kersize))(conv3_incep2)
         conv3_incep2 = BatchNormalization()(conv3_incep2)
         conv3_incep2 = Activation(activation='relu')(conv3_incep2)
         # inception3
-        conv3_incep3 = ZeroPadding2D((0, 2))(conv2_pool)
-        conv3_incep3 = Conv2D(filters=3, kernel_size=(h3, 5))(conv3_incep3)
+        conv3_incep3 = ZeroPadding2D((0, self.conv3_incep3_kersize//2))(conv2_pool)
+        conv3_incep3 = Conv2D(filters=self.conv3_incep3_filters, kernel_size=(h3, self.conv3_incep3_kersize))(conv3_incep3)
         conv3_incep3 = BatchNormalization()(conv3_incep3)
         conv3_incep3 = Activation(activation='relu')(conv3_incep3)
         # concat
         conv3 = Concatenate(axis=-1)([conv3_incep1, conv3_incep2, conv3_incep3])
-        # 加高斯噪声
-        # conv3 = GaussianNoise(stddev=0.1)(conv3)
         # 池化
         conv3_pool, conv3_argmax = Lambda(abMaxPooling_with_argmax, arguments={'pool_size': [1, 2]}, name='abMaxPool3')(conv3)
         conv3_pool = Lambda(reshapes, name='reshape3')(conv3_pool)
 
+        # conv block -4 （卷积）
+        h4 = conv3_pool.shape[1]
+        # inception1
+        conv4_incep1 = Conv2D(filters=self.conv4_incep1_filters, kernel_size=(h4, self.conv4_incep1_kersize))(conv3_pool)
+        conv4_incep1 = BatchNormalization()(conv4_incep1)
+        conv4_incep1 = Activation(activation='relu')(conv4_incep1)
+        # inception2
+        conv4_incep2 = ZeroPadding2D((0, self.conv4_incep2_kersize // 2))(conv3_pool)
+        conv4_incep2 = Conv2D(filters=self.conv4_incep2_filters, kernel_size=(h4, self.conv4_incep2_kersize))(conv4_incep2)
+        conv4_incep2 = BatchNormalization()(conv4_incep2)
+        conv4_incep2 = Activation(activation='relu')(conv4_incep2)
+        # inception3
+        conv4_incep3 = ZeroPadding2D((0, self.conv4_incep3_kersize // 2))(conv3_pool)
+        conv4_incep3 = Conv2D(filters=self.conv4_incep3_filters, kernel_size=(h4, self.conv4_incep3_kersize))(conv4_incep3)
+        conv4_incep3 = BatchNormalization()(conv4_incep3)
+        conv4_incep3 = Activation(activation='relu')(conv4_incep3)
+        # concat
+        conv4 = Concatenate(axis=-1)([conv4_incep1, conv4_incep2, conv4_incep3])
+        # 池化
+        conv4_pool, conv4_argmax = Lambda(abMaxPooling_with_argmax, arguments={'pool_size': [1, 2]}, name='abMaxPool4')(conv4)
+        conv4_pool = Lambda(reshapes, name='reshape4')(conv4_pool)
+
+
         # 中间层
-        z = ZeroPadding2D((0, 1))(conv3_pool)
-        z = Conv2D(filters=8, kernel_size=(conv3_pool.get_shape()[1], 3))(z)
+        h_z = conv4_pool.get_shape()[1]
+        z = ZeroPadding2D((0, self.z_kersize//2))(conv4_pool)
+        z = Conv2D(filters=self.z_filters, kernel_size=(h_z, self.z_kersize))(z)
         z = BatchNormalization()(z)
         encoder = Activation(activation='relu')(z)
 
         # decoder
         # conv block -1 （反卷积+反池化）
-        deconv1_unpool = Lambda(unAbMaxPooling, arguments={'ksize': [1, 1, 2, 1]}, name='unAbPool1')([encoder, conv3_argmax])
-        deconv1 = Conv2DTranspose(filters=8, kernel_size=(h3, 3), padding='same')(deconv1_unpool)
+        deconv1_unpool = Lambda(unAbMaxPooling, arguments={'ksize': [1, 1, 2, 1]}, name='unAbPool1')([encoder, conv4_argmax])
+        deconv1 = Conv2DTranspose(filters=self.conv3_filters, kernel_size=(h4, self.deconv1_kersize), padding='same')(deconv1_unpool)
         deconv1 = BatchNormalization()(deconv1)
         deconv1 = Activation(activation='relu')(deconv1)
 
         # conv block -2 （反卷积+反池化）
-        deconv2_unpool = Lambda(unAbMaxPooling, arguments={'ksize': [1, 1, 2, 1]}, name='unAbPool2')(
-            [deconv1, conv2_argmax])
-        deconv2 = Conv2DTranspose(filters=16, kernel_size=(h2, 3), padding='same')(deconv2_unpool)
+        deconv2_unpool = Lambda(unAbMaxPooling, arguments={'ksize': [1, 1, 2, 1]}, name='unAbPool2')([deconv1, conv3_argmax])
+        deconv2 = Conv2DTranspose(filters=self.conv2_filters, kernel_size=(h3, self.deconv2_kersize), padding='same')(deconv2_unpool)
         deconv2 = BatchNormalization()(deconv2)
         deconv2 = Activation(activation='relu')(deconv2)
 
         # conv block -3 （反卷积+反池化）
-        deconv3_unpool = Lambda(unAbMaxPooling, arguments={'ksize': [1, 1, 2, 1]}, name='unAbPool3')([deconv2, conv1_argmax])
-        deconv3 = Conv2DTranspose(filters=input_shape[2], kernel_size=(h1, 3), padding='valid')(deconv3_unpool)
-        deconv3 = Cropping2D(cropping=((0, 0), (1, 1)))(deconv3)
+        deconv3_unpool = Lambda(unAbMaxPooling, arguments={'ksize': [1, 1, 2, 1]}, name='unAbPool3')([deconv2, conv2_argmax])
+        deconv3 = Conv2DTranspose(filters=self.conv1_filters, kernel_size=(h2, self.deconv3_kersize), padding='same')(deconv3_unpool)
+        # deconv3 = Cropping2D(cropping=((0, 0), (1, 1)))(deconv3)
         deconv3 = BatchNormalization()(deconv3)
-        output_layer = Activation(activation='tanh')(deconv3)
+        deconv3 = Activation(activation='relu')(deconv3)
+
+        # conv block -4 （反卷积+反池化）
+        deconv4_unpool = Lambda(unAbMaxPooling, arguments={'ksize': [1, 1, 2, 1]}, name='unAbPool4')([deconv3, conv1_argmax])
+        deconv4 = Conv2DTranspose(filters=input_shape[2], kernel_size=(h1, self.deconv4_kersize), padding='valid')(deconv4_unpool)
+        deconv4 = Cropping2D(cropping=((0, 0), (1, 1)))(deconv4)
+        deconv4 = BatchNormalization()(deconv4)
+        output_layer = Activation(activation='tanh')(deconv4)
 
         model = Model(inputs=input_layer, outputs=output_layer)
 
-        # model.compile(optimizer='rmsprop', loss='binary_crossentropy', metrics=['accuracy'])
-        model.compile(loss='mse',
+        model.compile(loss=root_mean_squared_error,
                       optimizer=optimizers.Adam(0.001),
-                      metrics=['mse'],
+                      metrics=[root_mean_squared_error],
                       experimental_run_tf_function=False)
 
         file_dir = os.path.join(self.output_directory, 'cnn_AE_npron')
@@ -225,13 +290,13 @@ class Cnn_AE_npron:
             os.mkdir(file_dir)
         file_path = os.path.join(file_dir, 'best_model.hdf5')
 
-        log_dir = ".\logs\\fit\\cnn_AE_npron\\" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+        log_dir = "./logs/cnn/fit/cnn_AE_npron/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
         tensorboard = tf.keras.callbacks.TensorBoard(log_dir=log_dir)
         model_checkpoint = keras.callbacks.ModelCheckpoint(filepath=file_path,
                                                            monitor='val_loss',
                                                            save_best_only=True,
                                                            mode='auto')
-        reduce_lr = keras.callbacks.ReduceLROnPlateau(monitor='loss', factor=0.9, patience=20,
+        reduce_lr = keras.callbacks.ReduceLROnPlateau(monitor='loss', factor=0.5, patience=20,
                                                       min_lr=0.0001)
 
         self.callbacks = [tensorboard, model_checkpoint, reduce_lr]
