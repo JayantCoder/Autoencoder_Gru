@@ -5,6 +5,7 @@ import time
 import datetime
 import tensorflow as tf
 from tensorflow import keras
+from kerastuner import HyperModel
 from tensorflow.keras import backend as K
 from tensorflow.keras import layers, optimizers
 from tensorflow.keras.models import Model, load_model
@@ -96,14 +97,17 @@ def root_mean_squared_error(y_true, y_pred):
 
 
 
-class Cnn_AE_npron:
-    def __init__(self, output_directory, input_shape, batchsize, verbose=False):
+class Cnn_AE_npron(HyperModel):
+    def __init__(self, output_directory, input_shape, batchsize, verbose=False, **kwargs):
+        super(Cnn_AE_npron, self).__init__(**kwargs)
         self.output_directory = output_directory
+        self.input_shape = input_shape
+        self.batchsize = batchsize
         self.set_Config()
-        self.model = self.build_model(input_shape, batchsize)
+        # self.model = self.build_model(input_shape, batchsize)
         # verbose是信息展示模式
-        if verbose == True:
-            self.model.summary()
+        # if verbose == True:
+        #     self.model.summary()
         self.verbose = verbose
 
     def set_Config(self):
@@ -139,7 +143,7 @@ class Cnn_AE_npron:
         self.conv4_incep3_filters = 3
         self.conv4_incep3_kersize = 5
 
-        self.z_filters = 8
+        self.z_filters = self.conv4_filters
         self.z_kersize = 3
         self.deconv1_kersize = 3
         self.deconv2_kersize = 3
@@ -147,11 +151,44 @@ class Cnn_AE_npron:
         self.deconv4_kersize = 3
 
 
-    def build_model(self, input_shape, batchsize):
+    def set_ModCallbacks(self):
+        file_dir = os.path.join(self.output_directory, 'cnn_AE_n')
+        if not os.path.exists(file_dir):
+            os.mkdir(file_dir)
+        file_path = os.path.join(file_dir, 'best_model.hdf5')
+
+        log_dir = ".\log\\fit\\cnn_AE_n\\" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+        tensorboard = tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)
+        model_checkpoint = keras.callbacks.ModelCheckpoint(filepath=file_path,
+                                                           monitor='val_loss',
+                                                           save_best_only=True,
+                                                           mode='auto')
+        reduce_lr = keras.callbacks.ReduceLROnPlateau(monitor='loss', factor=0.5, patience=2,
+                                                      min_lr=0.0001)
+
+
+        self.callbacks = [tensorboard, model_checkpoint, reduce_lr]
+        return self.callbacks
+
+
+    def set_HpCallbacks(self):
+        reduce_lr = keras.callbacks.ReduceLROnPlateau(monitor='loss', factor=0.5, patience=2,
+                                                      min_lr=0.0001)
+        callbacks = [reduce_lr]
+        return callbacks
+
+    def build(self, hp):
         # input --> (None, 1, 576, 1)
-        input_layer = Input(batch_shape=(batchsize, input_shape[0], input_shape[1], input_shape[2]))
+        input_layer = Input(batch_shape=(self.batchsize, self.input_shape[0], self.input_shape[1], self.input_shape[2]))
         # Encoder
         # conv block -1 （卷积+池化）
+        self.conv1_incep1_filters = hp.Int('conv1_incep1_filters', 16, 32, step=4)
+        self.conv1_incep2_filters = hp.Int('conv1_incep2_filters', 16, 32, step=4)
+        self.conv1_incep3_filters = hp.Int('conv1_incep3_filters', 16, 32, step=4)
+        self.conv1_incep1_kersize = hp.Int('conv1_incep1_kersize', 1, 3, step=2)
+        self.conv1_incep2_kersize = hp.Int('conv1_incep2_kersize', 3, 7, step=2)
+        self.conv1_incep3_kersize = hp.Int('conv1_incep3_kersize', 5, 9, step=2)
+        self.conv1_filters = self.conv1_incep1_filters + self.conv1_incep2_filters + self.conv1_incep3_filters
         h1 = input_layer.shape[1]
         # inception1
         conv1_incep1 = Conv2D(filters=self.conv1_incep1_filters, kernel_size=(h1, self.conv1_incep1_kersize))(input_layer)
@@ -176,6 +213,13 @@ class Cnn_AE_npron:
         conv1_pool = Lambda(reshapes, name='reshape1')(conv1_pool)
 
         # conv block -2 （卷积+池化）
+        self.conv2_incep1_filters = hp.Int('conv2_incep1_filters', 8, 16, step=4)
+        self.conv2_incep2_filters = hp.Int('conv2_incep2_filters', 8, 16, step=4)
+        self.conv2_incep3_filters = hp.Int('conv2_incep3_filters', 8, 16, step=4)
+        self.conv2_incep1_kersize = hp.Int('conv2_incep1_kersize', 1, 3, step=2)
+        self.conv2_incep2_kersize = hp.Int('conv2_incep2_kersize', 3, 7, step=2)
+        self.conv2_incep3_kersize = hp.Int('conv2_incep3_kersize', 5, 9, step=2)
+        self.conv2_filters = self.conv2_incep1_filters + self.conv2_incep2_filters + self.conv2_incep3_filters
         h2 = conv1_pool.shape[1]
         # inception1
         conv2_incep1 = Conv2D(filters=self.conv2_incep1_filters, kernel_size=(h2, self.conv2_incep1_kersize))(conv1_pool)
@@ -200,6 +244,13 @@ class Cnn_AE_npron:
         conv2_pool = Lambda(reshapes, name='reshape2')(conv2_pool)
 
         # conv block -3 （卷积）
+        self.conv3_incep1_filters = hp.Int('conv3_incep1_filters', 4, 8, step=2)
+        self.conv3_incep2_filters = hp.Int('conv3_incep2_filters', 4, 8, step=2)
+        self.conv3_incep3_filters = hp.Int('conv3_incep3_filters', 4, 8, step=2)
+        self.conv3_incep1_kersize = hp.Int('conv3_incep1_kersize', 1, 3, step=2)
+        self.conv3_incep2_kersize = hp.Int('conv3_incep2_kersize', 3, 7, step=2)
+        self.conv3_incep3_kersize = hp.Int('conv3_incep3_kersize', 5, 9, step=2)
+        self.conv3_filters = self.conv3_incep1_filters + self.conv3_incep2_filters + self.conv3_incep3_filters
         h3 = conv2_pool.shape[1]
         # inception1
         conv3_incep1 = Conv2D(filters=self.conv3_incep1_filters, kernel_size=(h3, self.conv3_incep1_kersize))(conv2_pool)
@@ -222,6 +273,13 @@ class Cnn_AE_npron:
         conv3_pool = Lambda(reshapes, name='reshape3')(conv3_pool)
 
         # conv block -4 （卷积）
+        self.conv4_incep1_filters = hp.Int('conv4_incep1_filters', 2, 4, step=1)
+        self.conv4_incep2_filters = hp.Int('conv4_incep2_filters', 2, 4, step=1)
+        self.conv4_incep3_filters = hp.Int('conv4_incep3_filters', 2, 4, step=1)
+        self.conv4_incep1_kersize = hp.Int('conv4_incep1_kersize', 1, 3, step=2)
+        self.conv4_incep2_kersize = hp.Int('conv4_incep2_kersize', 3, 7, step=2)
+        self.conv4_incep3_kersize = hp.Int('conv4_incep3_kersize', 5, 9, step=2)
+        self.conv4_filters = self.conv4_incep1_filters+self.conv4_incep2_filters+self.conv4_incep3_filters
         h4 = conv3_pool.shape[1]
         # inception1
         conv4_incep1 = Conv2D(filters=self.conv4_incep1_filters, kernel_size=(h4, self.conv4_incep1_kersize))(conv3_pool)
@@ -245,6 +303,8 @@ class Cnn_AE_npron:
 
 
         # 中间层
+        self.z_kersize = hp.Int('z_kersize', 3, 7, step=2)
+        self.z_filters = self.conv4_filters
         h_z = conv4_pool.get_shape()[1]
         z = ZeroPadding2D((0, self.z_kersize//2))(conv4_pool)
         z = Conv2D(filters=self.z_filters, kernel_size=(h_z, self.z_kersize))(z)
@@ -252,29 +312,33 @@ class Cnn_AE_npron:
         encoder = Activation(activation='relu')(z)
 
         # decoder
-        # conv block -1 （反卷积+反池化）
+        # deconv block -1 （反卷积+反池化）
+        self.deconv1_kersize = hp.Int('deconv1_kersize', 3, 7, step=2)
         deconv1_unpool = Lambda(unAbMaxPooling, arguments={'ksize': [1, 1, 2, 1]}, name='unAbPool1')([encoder, conv4_argmax])
         deconv1 = Conv2DTranspose(filters=self.conv3_filters, kernel_size=(h4, self.deconv1_kersize), padding='same')(deconv1_unpool)
         deconv1 = BatchNormalization()(deconv1)
         deconv1 = Activation(activation='relu')(deconv1)
 
-        # conv block -2 （反卷积+反池化）
+        # deconv block -2 （反卷积+反池化）
+        self.deconv2_kersize = hp.Int('deconv2_kersize', 3, 7, step=2)
         deconv2_unpool = Lambda(unAbMaxPooling, arguments={'ksize': [1, 1, 2, 1]}, name='unAbPool2')([deconv1, conv3_argmax])
         deconv2 = Conv2DTranspose(filters=self.conv2_filters, kernel_size=(h3, self.deconv2_kersize), padding='same')(deconv2_unpool)
         deconv2 = BatchNormalization()(deconv2)
         deconv2 = Activation(activation='relu')(deconv2)
 
-        # conv block -3 （反卷积+反池化）
+        # deconv block -3 （反卷积+反池化）
+        self.deconv3_kersize = hp.Int('deconv3_kersize', 3, 7, step=2)
         deconv3_unpool = Lambda(unAbMaxPooling, arguments={'ksize': [1, 1, 2, 1]}, name='unAbPool3')([deconv2, conv2_argmax])
         deconv3 = Conv2DTranspose(filters=self.conv1_filters, kernel_size=(h2, self.deconv3_kersize), padding='same')(deconv3_unpool)
         # deconv3 = Cropping2D(cropping=((0, 0), (1, 1)))(deconv3)
         deconv3 = BatchNormalization()(deconv3)
         deconv3 = Activation(activation='relu')(deconv3)
 
-        # conv block -4 （反卷积+反池化）
+        # deconv block -4 （反卷积+反池化）
+        self.deconv4_kersize = hp.Int('deconv4_kersize', 3, 7, step=2)
         deconv4_unpool = Lambda(unAbMaxPooling, arguments={'ksize': [1, 1, 2, 1]}, name='unAbPool4')([deconv3, conv1_argmax])
-        deconv4 = Conv2DTranspose(filters=input_shape[2], kernel_size=(h1, self.deconv4_kersize), padding='valid')(deconv4_unpool)
-        deconv4 = Cropping2D(cropping=((0, 0), (1, 1)))(deconv4)
+        deconv4 = Conv2DTranspose(filters=self.input_shape[2], kernel_size=(h1, self.deconv4_kersize), padding='valid')(deconv4_unpool)
+        deconv4 = Cropping2D(cropping=((0, 0), (self.deconv4_kersize//2, self.deconv4_kersize//2)))(deconv4)
         deconv4 = BatchNormalization()(deconv4)
         output_layer = Activation(activation='tanh')(deconv4)
 
@@ -285,28 +349,12 @@ class Cnn_AE_npron:
                       metrics=[root_mean_squared_error],
                       experimental_run_tf_function=False)
 
-        file_dir = os.path.join(self.output_directory, 'cnn_AE_npron')
-        if not os.path.exists(file_dir):
-            os.mkdir(file_dir)
-        file_path = os.path.join(file_dir, 'best_model.hdf5')
-
-        log_dir = ".\log\\fit\\cnn_AE_npron\\" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
-        tensorboard = tf.keras.callbacks.TensorBoard(log_dir=log_dir)
-        model_checkpoint = keras.callbacks.ModelCheckpoint(filepath=file_path,
-                                                           monitor='val_loss',
-                                                           save_best_only=True,
-                                                           mode='auto')
-        reduce_lr = keras.callbacks.ReduceLROnPlateau(monitor='loss', factor=0.5, patience=20,
-                                                      min_lr=0.0001)
-
-        self.callbacks = [tensorboard, model_checkpoint, reduce_lr]
-        # self.callbacks = [model_checkpoint, reduce_lr]
-
         return model
 
     def fit_model(self, x_train, y_train, x_val, y_val, epochs):
         # x_val and y_val are only used to monitor the test loss and NOT for training
         # batch_size = 12
+        self.set_ModCallbacks()
         nb_epochs = epochs
 
         mini_batch_size = 6
