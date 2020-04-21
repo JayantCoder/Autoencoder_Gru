@@ -175,7 +175,7 @@ class Cnn_AE_2:
         conv4 = BatchNormalization()(conv4)
         conv4 = Activation(activation='relu')(conv4)
         conv4_pool, conv4_argmax = Lambda(abMaxPooling_with_argmax,
-                                          arguments={'pool_size': [2, 2], 'strides': [1, 2], 'padding': 'VALID'},
+                                          arguments={'pool_size': [1, 2], 'strides': [1, 2], 'padding': 'VALID'},
                                           name='abMaxPool4')(conv4)
 
         # 中间层
@@ -185,7 +185,7 @@ class Cnn_AE_2:
 
         # decoder
         # conv block -1 （反卷积+反池化）
-        deconv1_unpool = Lambda(unAbMaxPooling, arguments={'ksize': [1, 2, 2, 1]},
+        deconv1_unpool = Lambda(unAbMaxPooling, arguments={'ksize': [1, 1, 2, 1]},
                                 name='unAbPool1')([encoder, conv4_argmax])
         deconv1 = Conv2DTranspose(filters=self.conv3_filters, kernel_size=self.conv4_kersize, padding='same')(deconv1_unpool)
         deconv1 = BatchNormalization()(deconv1)
@@ -249,4 +249,3 @@ class Cnn_AE_2:
         # y_pred = np.argmax(y_pred, axis=1)
         # print('test_loss: ', loss)
         # save_logs(self.output_directory, hist, y_pred, y_true, duration, lr=False)
-
