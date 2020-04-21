@@ -1,11 +1,9 @@
-from data_utils import readucr, readucr2, Data_MinMax_Scaler, is_abnormal, readUcrTsv
-from cnn_AE_1 import Cnn_AE_1
+from data_utils import readucr, readucr2, Data_MinMax_Scaler,  readUcrTsv, readNab
 from cnn_AE_2 import Cnn_AE_2
 from cnn_AE_n import Cnn_AE_n
 from cnn_AE_npron import Cnn_AE_npron
 from cnn_AE_nproc import Cnn_AE_nproc
-from cnn_AE_1pro import Cnn_AE_1pro
-from GRU import Single_GRU, Multi_Gru,  output_of_single_gru, output_of_multi_gru
+from GRU import Single_GRU, Multi_Gru, output_of_single_gru, output_of_multi_gru
 
 import tensorflow as tf
 from tensorflow.keras.models import Model, load_model
@@ -17,13 +15,12 @@ import os
 
 if __name__ == '__main__':
     # 读取数据
-    timeWinNum = 32  # 时间窗个数
+    timeWinNum = 24  # 时间窗个数
     # dataset_name = sys.argv[1]
-    dataset_name = 'CinCECGTorso'
+    dataset_name = 'NAB/artificialNoAnomaly'
     dataset_path = os.path.join('data', dataset_name)
-    x_train, y_train, sensors_num, timewindows = readUcrTsv(dataset_path + '/' + dataset_name + '_TEST.tsv', timeWinNum,
-                                                            method=2)
-    x_test, y_test, _, _ = readUcrTsv(dataset_path + '/' + dataset_name + '_TRAIN.tsv', timeWinNum, method=2)
+    x_train, y_train, sensors_num, timewindows = readNab(dataset_path, timeWinNum)
+    x_test, y_test, _, _ = readNab(dataset_path, timeWinNum)
 
     # 将数据归一化
     # x_train = Data_MinMax_Scaler(x_train)
@@ -33,25 +30,25 @@ if __name__ == '__main__':
     # print(f'x_train after normalization:{x_train.shape}')
     # print(f'x_test after normalization :{x_train.shape}')
 
-    # 训练gru模型
     gru_model = {}
     GruFilepath = {}
     gru_train = {}
     gru_test = {}
 
+    # 训练gru模型
     for i in range(sensors_num):
+        # '''
         gru_model['model_' + str(i)] = Multi_Gru(dataset_name,
                                                  x_train[i].shape[1:],
                                                  output_shape=1,
                                                  h_dim=20,
                                                  timewindows=timewindows,
                                                  verbose=True)
-        gru_model['model_' + str(i)].fit(x_train[i], y_train[i], x_test[i], y_test[i], epochs=2)
-
-    # 提取gru的输出
+        gru_model['model_' + str(i)].fit(x_train[i], y_train[i], x_test[i], y_test[i], epochs=500)
+        # '''
+        # 提取gru的输出
         GruFilepath['model_' + str(i)] = gru_model['model_' + str(i)].model_path
-        # 训练时需要注释下面这条代码
-        # GruFilepath['model_' + str(i)] = 'result/multigru/cnn_AE_n/CinCECGTorso_gru_model_' + str(i) + '.hdf5'
+        # GruFilepath['model_' + str(i)] = 'result/multigru/CinCECGTorso_gru_model_' + str(i) + '.hdf5'
         gru_train['model_' + str(i)] = output_of_multi_gru(x_train[i], GruFilepath['model_' + str(i)],
                                                            timewindows=timewindows)
         gru_test['model_' + str(i)] = output_of_multi_gru(x_test[i], GruFilepath['model_' + str(i)],
@@ -68,11 +65,4 @@ if __name__ == '__main__':
     input_shape = gru_train_concat.shape[1:]
     print(f"input_shape of CNN:{input_shape}")
     cnn_Auto = Cnn_AE_n('result', input_shape, 6, True)
-    cnn_Auto.fit_model(gru_train_concat, gru_train_concat, gru_test_concat, gru_test_concat, epochs=2)
-
-
-
-
-
-
-
+    cnn_Auto.fit_model(gru_train_concat, gru_train_concat, gru_test_concat, gru_test_concat, epochs=500)
